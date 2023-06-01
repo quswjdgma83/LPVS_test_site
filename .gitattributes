@@ -1,0 +1,5 @@
+* text=auto
+
+# 파일 확장자별 줄바꿈 설정
+*.js text eol=lf
+*.css text eol=lf
