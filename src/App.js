@@ -2,14 +2,27 @@ import './App.css';
 import { useState } from 'react';
 import { useEffect } from 'react';
 
+import surf from "./images/background.png";
+import logo from './images/LPVS_logo.png';
+import MainPage from './MainPage';
+import { useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+
+
 function Login(props) {
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
   
   return <>
-    <h2>로그인</h2>
+    <div 
+  className="HomeImageContainer" 
+  style={{backgroundImage: `url(${surf})`, backgroundSize: 'cover'}}
+/>
+
+    <h2 style={{ color: 'white' }}>로그인</h2>
 
     <div className="form">
+      <img src={logo} className="App-logo" alt="logo" />
       <p><input className="login" type="text" name="username" placeholder="아이디" onChange={event => {
         setId(event.target.value);
       }} /></p>
@@ -41,9 +54,14 @@ function Login(props) {
       }} /></p>
     </div>
 
-    <p>계정이 없으신가요?  <button onClick={() => {
+    <p>
+      <span style={{ color: 'white' }}>계정이 없으신가요?</span>{" "}
+      <button className="btn-signup" onClick={() => {
       props.setMode("SIGNIN");
-    }}>회원가입</button></p>
+      }}>
+        회원가입
+      </button>
+      </p>
   </> 
 }
 
@@ -54,7 +72,11 @@ function Signin(props) {
   const [password2, setPassword2] = useState("");
 
   return <>
-    <h2>회원가입</h2>
+    <div 
+        className="HomeImageContainer" 
+        style={{backgroundImage: `url(${surf})`, backgroundSize: 'cover'}}
+      />
+     <h2 style={{ color: 'white' }}>회원가입</h2>
 
     <div className="form">
       <p><input className="login" type="text" placeholder="아이디" onChange={event => {
@@ -93,14 +115,21 @@ function Signin(props) {
       }} /></p>
     </div>
 
-    <p>로그인화면으로 돌아가기  <button onClick={() => {
+    <p>
+      로그인화면으로 돌아가기{" "}
+      <button className="btn-signup" onClick={() => {
       props.setMode("LOGIN");
-    }}>로그인</button></p>
+       }}>
+        로그인
+      </button>
+    </p>
   </> 
 }
 
 function App() {
   const [mode, setMode] = useState("");
+  const navigate = useNavigate();  // 여기서 useNavigate 훅을 사용합니다.
+  
 
   useEffect(() => {
     fetch("http://localhost:3001/authcheck")
@@ -108,6 +137,7 @@ function App() {
       .then((json) => {        
         if (json.isLogin === "True") {
           setMode("WELCOME");
+          navigate('/');  // 여기서 navigate 함수를 사용해 메인 페이지로 이동합니다.
         }
         else {
           setMode("LOGIN");
@@ -123,20 +153,14 @@ function App() {
   else if (mode === 'SIGNIN') {
     content = <Signin setMode={setMode}></Signin> 
   }
-  else if (mode === 'WELCOME') {
-    content = <>
-    <h2>메인 페이지에 오신 것을 환영합니다</h2>
-    <p>로그인에 성공하셨습니다.</p> 
-    <a href="/logout">로그아웃</a>   
-    </>
-  }
 
   return (
-    <>
+    <Router>
+      <Route path="/" exact component={MainPage} />
       <div className="background">
         {content}
       </div>
-    </>
+    </Router>
   );
 }
 
